@@ -1,16 +1,16 @@
-# API Thanh toán
+# Payment API
 
-Tài liệu này mô tả chi tiết về các API endpoint phục vụ chức năng thanh toán.
+Docs này mô tả chi tiết về các API endpoint phục vụ chức năng payment.
 
 ## Base URL
 
 ```
-http://localhost:3000/api
+http://localhost:3000
 ```
 
-## 1. Tạo URL Thanh toán
+## 1. Create Payment URL
 
-Tạo một URL thanh toán mới và chuyển người dùng đến trang thanh toán của nhà cung cấp (ví dụ: MoMo).
+Tạo một payment URL mới và chuyển user đến payment page của provider (ví dụ: MoMo).
 
 ### Endpoint
 
@@ -20,18 +20,18 @@ POST /payments
 
 ### Request Body
 
-| Trường             | Kiểu   | Bắt buộc | Mô tả                                                        |
-| ------------------ | ------ | -------- | ------------------------------------------------------------ |
-| amount             | string | Có       | Số tiền thanh toán (VND)                                     |
-| orderInfo          | object | Có       | Thông tin đơn hàng                                           |
-| orderInfo.userId   | string | Có       | ID người dùng (24 ký tự)                                     |
-| orderInfo.message  | string | Có       | Nội dung thanh toán                                          |
-| orderInfo.type     | string | Có       | Loại giao dịch (`PREMIUM_SUBSCRIPTION` hoặc `AUTHOR_PAYOUT`) |
-| orderInfo.metadata | object | Không    | Dữ liệu bổ sung của đơn hàng                                 |
-| paymentItems       | array  | Không    | Chi tiết các mục thanh toán                                  |
-| options            | object | Không    | Tùy chọn thanh toán                                          |
+| Field              | Type   | Required | Description                                                    |
+| ------------------ | ------ | -------- | -------------------------------------------------------------- |
+| amount             | string | Yes      | Payment amount (VND)                                           |
+| orderInfo          | object | Yes      | Order information                                              |
+| orderInfo.userId   | string | Yes      | User ID (24 characters)                                        |
+| orderInfo.message  | string | Yes      | Payment content                                                |
+| orderInfo.type     | string | Yes      | Transaction type (`PREMIUM_SUBSCRIPTION` hoặc `AUTHOR_PAYOUT`) |
+| orderInfo.metadata | object | No       | Additional order data                                          |
+| paymentItems       | array  | No       | Payment item details                                           |
+| options            | object | No       | Payment options                                                |
 
-### Ví dụ Request Body
+### Example Request Body
 
 ```json
 {
@@ -57,9 +57,9 @@ POST /payments
 }
 ```
 
-## 2. Kiểm tra Trạng thái Thanh toán
+## 2. Check Payment Status
 
-Kiểm tra trạng thái của một giao dịch thanh toán.
+Kiểm tra status của một payment transaction.
 
 ### Endpoint
 
@@ -69,9 +69,9 @@ GET /payments/:orderId
 
 ### Parameters
 
-| Tham số | Kiểu   | Mô tả                      |
-| ------- | ------ | -------------------------- |
-| orderId | string | ID của đơn hàng (24 ký tự) |
+| Parameter | Type   | Description                     |
+| --------- | ------ | ------------------------------- |
+| orderId   | string | ID of the order (24 characters) |
 
 ### Response
 
@@ -90,9 +90,9 @@ GET /payments/:orderId
 }
 ```
 
-## 3. Lấy Lịch sử Giao dịch
+## 3. Get Transaction History
 
-Lấy danh sách các giao dịch của một người dùng.
+Lấy danh sách transactions của một user.
 
 ### Endpoint
 
@@ -102,9 +102,9 @@ GET /users/:userId/transactions
 
 ### Parameters
 
-| Tham số | Kiểu   | Mô tả                        |
-| ------- | ------ | ---------------------------- |
-| userId  | string | ID của người dùng (24 ký tự) |
+| Parameter | Type   | Description                    |
+| --------- | ------ | ------------------------------ |
+| userId    | string | ID of the user (24 characters) |
 
 ### Response
 
@@ -123,24 +123,24 @@ GET /users/:userId/transactions
 }
 ```
 
-## Trạng thái Thanh toán
+## Payment Status
 
-| Mã      | Mô tả                 |
-| ------- | --------------------- |
-| PENDING | Đang chờ thanh toán   |
-| SUCCESS | Thanh toán thành công |
-| FAILED  | Thanh toán thất bại   |
+| Code    | Description        |
+| ------- | ------------------ |
+| PENDING | Pending payment    |
+| SUCCESS | Payment successful |
+| FAILED  | Payment failed     |
 
-## Loại Giao dịch
+## Transaction Types
 
-| Mã                   | Mô tả                                 |
-| -------------------- | ------------------------------------- |
-| PREMIUM_SUBSCRIPTION | Thanh toán nâng cấp tài khoản Premium |
-| AUTHOR_PAYOUT        | Thanh toán nhuận bút cho tác giả      |
+| Code                 | Description             |
+| -------------------- | ----------------------- |
+| PREMIUM_SUBSCRIPTION | Premium account upgrade |
+| AUTHOR_PAYOUT        | Author payment          |
 
-## Ví dụ Sử dụng
+## Usage Examples
 
-### 1. Tạo thanh toán đơn giản
+### 1. Create Simple Payment
 
 ```bash
 curl -X POST http://localhost:3000/api/payments \
@@ -155,7 +155,7 @@ curl -X POST http://localhost:3000/api/payments \
 }'
 ```
 
-### 2. Tạo thanh toán với tùy chọn đầy đủ
+### 2. Create Payment with Full Options
 
 ```bash
 curl -X POST http://localhost:3000/api/payments \
@@ -188,27 +188,27 @@ curl -X POST http://localhost:3000/api/payments \
 }'
 ```
 
-### 3. Kiểm tra trạng thái thanh toán
+### 3. Check Payment Status
 
 ```bash
 curl http://localhost:3000/api/payments/507f1f77bcf86cd799439011
 ```
 
-### 4. Xem lịch sử giao dịch
+### 4. Get Transaction History
 
 ```bash
 curl http://localhost:3000/api/users/507f1f77bcf86cd799439011/transactions
 ```
 
-## Xử lý Lỗi
+## Error Handling
 
-API trả về các mã lỗi HTTP tương ứng khi có lỗi xảy ra:
+API trả về các HTTP error codes tương ứng khi có lỗi xảy ra:
 
-- 400: Bad Request - Dữ liệu gửi lên không hợp lệ
-- 404: Not Found - Không tìm thấy resource
-- 500: Internal Server Error - Lỗi server
+- 400: Bad Request - Invalid input data
+- 404: Not Found - Resource not found
+- 500: Internal Server Error - Server error
 
-Ví dụ response lỗi:
+Example error response:
 
 ```json
 {
